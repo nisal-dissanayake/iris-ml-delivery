@@ -1,0 +1,19 @@
+# Keep the build context to what the image needs: Dockerfile, requirements.txt, train.py, app.py
+.git
+.github
+.venv
+venv
+__pycache__/
+*.pyc
+.env
+*.env
+reports/
+release/
+release-*/
+# Local model must NOT be copied in; the image trains its own during the build
+iris_model.joblib
+# Test / delivery tooling is not part of the serving image
+scripts/
+locustfile.py
+compose.yaml
+*.md

@@ -1,0 +1,12 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+iris_model.joblib
+reports/
+# Downloaded approved bundles are kept locally for submission, not committed
+release/
+release-*/
+approved-release-*/
+*.zip

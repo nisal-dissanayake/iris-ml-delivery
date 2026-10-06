@@ -10,3 +10,12 @@ release/
 release-*/
 approved-release-*/
 *.zip
+
+# local helper/evidence files (not part of the app)
+logs/
+steps/
+go.cmd
+stages/
+evidence/
+RUNBOOK.md
+SUBMISSION.md

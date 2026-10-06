@@ -123,3 +123,40 @@ jobs:
       - name: Remove staging container
         if: always()
         run: docker rm -f "$CONTAINER" || true
+
+  # ---------------------------------------------------------------- Practical C
+  release:
+    needs: [build, load_test]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production   # required reviewer configured in Settings -> Environments
+    permissions:
+      contents: read
+    env:
+      IMAGE_REF: ${{ needs.build.outputs.image_ref }}
+      SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Prepare approved release bundle
+        run: |
+          mkdir -p release
+          cp compose.yaml release/compose.yaml
+          cp scripts/smoke.py release/smoke.py
+          printf 'IMAGE_REF=%s\nHOST_PORT=5000\n' "$IMAGE_REF" > release/release.env
+          echo "$SOURCE_SHA" > release/source-commit.txt
+          echo "Release contents:"; ls -l release; cat release/release.env release/source-commit.txt
+          {
+            echo "### Approved release"
+            echo "- Source SHA: \`$SOURCE_SHA\`"
+            echo "- Image: \`$IMAGE_REF\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload approved release bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: approved-release-${{ github.sha }}
+          path: release/
+          if-no-files-found: error

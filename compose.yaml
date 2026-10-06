@@ -1,0 +1,10 @@
+# Single-service deployment of an APPROVED image. No local build: the image is pulled by digest.
+# Use with:  docker compose --env-file release.env -p iris-classroom <command>
+services:
+  iris:
+    # Required: full reference, e.g. ghcr.io/owner/repo@sha256:<64 hex>. Compose stops if it is missing.
+    image: ${IMAGE_REF:?IMAGE_REF must be set to the full name@sha256 digest reference (see release.env)}
+    ports:
+      # Loopback only; host port configurable, container port fixed at 5000
+      - "127.0.0.1:${HOST_PORT:-5000}:5000"
+    restart: unless-stopped
